@@ -20,6 +20,18 @@ class Vector(object):
 		except TypeError:
 			raise TypeError('The coordinates must be an iterable')
 
+	def is_orthogonal_to(self, v, tolerance=1e-10):
+		return abs(self.dot(v)) < tolerance
+
+	def is_parallel_to(self, v):
+		return (self.is_zero() or 
+			v.is_zero() or
+			self.angle_with(v) == 0 or
+			self.angle_with(v) == pi)
+
+	def is_zero(self, tolerance=1e-10):
+		return self.magnitude() < tolerance
+
 	def dot(self, v):
 		return sum([x*y for x,y in zip(self.coordinates, v.coordinates)])
 
@@ -70,10 +82,7 @@ class Vector(object):
 	def __eq__(self, v):
 		return self.coordinates == v.coordinates
 
-v = Vector([3.183, -7.627])
-w = Vector([-2.668, 5.319])
-print v.eighttwo(w)
-
-v = Vector([7.35, 0.221, 5.188])
-w = Vector([2.751, 8.259, 3.985])
-print v.eighttwo(w) * 180 / math.pi
+v = Vector([-2.328, -7.284, -1.214])
+w = Vector([-1.821, 1.072, -2.94])
+print v.is_parallel_to(w)
+print v.is_orthogonal_to(w)
