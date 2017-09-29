@@ -24,6 +24,60 @@ class Line(object):
 
         self.set_basepoint()
 
+    def is_parallel_to(self, ell):
+    	'''
+    	判断两条直接是否平等
+    	'''
+    	n1 = Vector(self.normal_vector)
+    	n2 = Vector(ell.normal_vector)
+    	return n1.is_parallel_to(n2)
+
+    def __eq__(self, ell):
+    	'''
+    	判断两条直接是否是同一条直线
+    	'''
+    	if Vector(self.normal_vector).is_zero():
+    		if not Vector(ell.normal_vector).is_zero():
+    			return False
+    		else:
+    			deff = self.constant_term - ell.constant_term
+    			return MyDecimal(diff).is_near_zero()
+    	elif Vector(ell.normal_vector).is_zero():
+    		return False
+
+    	if not self.is_parallel_to(ell):
+    		return False
+
+    	x0 = self.basepoint
+    	y0 = ell.basepoint
+    	basepoint_difference = x0.minus(y0)
+
+    	n = self.normal_vector
+    	return basepoint_difference.is_orthogonal_to(n)
+
+    def compute_intersection(self, l):
+    	'''
+    	计算两条直接的交点
+    	'''
+    	if self.is_parallel_to(l):
+    		if self == l:
+    			return 'same line'
+    		else:
+    			return 'no intersection'
+
+    	if self.normal_vector[0] == 0:
+    		a,b = [Decimal(x) for x in l.normal_vector]
+    		k1 = l.constant_term
+    		c,d = [Decimal(x) for x in self.normal_vector]
+    		k2 = self.constant_term
+    	else:
+    		a,b = [Decimal(x) for x in self.normal_vector]
+    		k1 = self.constant_term
+    		c,d = [Decimal(x) for x in l.normal_vector]
+    		k2 = l.constant_term
+
+    	return [(d*k1-b*k2)/(a*d-b*c), (-c*k1+a*k2)/(a*d-b*c)]
+
 
     def set_basepoint(self):
         try:
@@ -32,7 +86,7 @@ class Line(object):
             basepoint_coords = ['0']*self.dimension
 
             initial_index = Line.first_nonzero_index(n)
-            initial_coefficient = n[initial_index]
+            initial_coefficient = Decimal(n[initial_index])
 
             basepoint_coords[initial_index] = c/initial_coefficient
             self.basepoint = Vector(basepoint_coords)
@@ -101,3 +155,18 @@ class Line(object):
 class MyDecimal(Decimal):
     def is_near_zero(self, eps=1e-10):
         return abs(self) < eps
+
+print '1#'
+l1 = Line([4.046, 2.836], 1.21)
+l2 = Line([10.115, 7.09], 3.025)
+print l1.compute_intersection(l2)
+
+print '2#'
+l1 = Line([7.204, 3.182], 8.68)
+l2 = Line([8.172, 4.114], 9.883)
+print l1.compute_intersection(l2)
+
+print '3#'
+l1 = Line([1.182, 5.562], 6.744)
+l2 = Line([1.773, 8.343], 9.525)
+print l1.compute_intersection(l2)

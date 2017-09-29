@@ -107,7 +107,7 @@ class Vector(object):
 		try:
 			u1 = self.normalized()
 			u2 = v.normalized()
-			angle_in_radians = acos(u1.dot(u2))
+			angle_in_radians = acos(round(u1.dot(u2), 3))
 
 			if in_degrees:
 				degrees_per_radian = 180. / pi
@@ -149,3 +149,6 @@ class Vector(object):
 
 	def __eq__(self, v):
 		return self.coordinates == v.coordinates
+
+# v = Vector([4.046, 2.836])
+# w = Vector([10.115, 7.09])
