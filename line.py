@@ -53,30 +53,34 @@ class Line(object):
     	basepoint_difference = x0.minus(y0)
 
     	n = self.normal_vector
-    	return basepoint_difference.is_orthogonal_to(n)
+    	return basepoint_difference.is_orthogonal_to(Vector(n))
 
-    def compute_intersection(self, l):
+    def intersection_with(self, ell):
     	'''
     	计算两条直接的交点
     	'''
-    	if self.is_parallel_to(l):
-    		if self == l:
+    	if self.is_parallel_to(ell):
+    		if self == ell:
     			return 'same line'
     		else:
     			return 'no intersection'
 
-    	if self.normal_vector[0] == 0:
-    		a,b = [Decimal(x) for x in l.normal_vector]
-    		k1 = l.constant_term
-    		c,d = [Decimal(x) for x in self.normal_vector]
-    		k2 = self.constant_term
-    	else:
-    		a,b = [Decimal(x) for x in self.normal_vector]
+    	try:
+    		A, B = [Decimal(x) for x in self.normal_vector]
+    		C, D = [Decimal(x) for x in ell.normal_vector]
     		k1 = self.constant_term
-    		c,d = [Decimal(x) for x in l.normal_vector]
-    		k2 = l.constant_term
+    		k2 = ell.constant_term
 
-    	return [(d*k1-b*k2)/(a*d-b*c), (-c*k1+a*k2)/(a*d-b*c)]
+    		x_numerator = D*k1 - B*k2
+    		y_numerator = -C*k1 + A*k2
+    		one_over_denom = Decimal('1') / (A*D - B*C)
+
+    		return Vector([x_numerator, y_numerator]).times_scalar(one_over_denom)
+    	except ZeroDivisionError:
+    		if self == ell:
+    			return self
+    		else:
+    			return None
 
 
     def set_basepoint(self):
@@ -159,14 +163,14 @@ class MyDecimal(Decimal):
 print '1#'
 l1 = Line([4.046, 2.836], 1.21)
 l2 = Line([10.115, 7.09], 3.025)
-print l1.compute_intersection(l2)
+print l1.intersection_with(l2)
 
 print '2#'
 l1 = Line([7.204, 3.182], 8.68)
 l2 = Line([8.172, 4.114], 9.883)
-print l1.compute_intersection(l2)
+print l1.intersection_with(l2)
 
 print '3#'
 l1 = Line([1.182, 5.562], 6.744)
 l2 = Line([1.773, 8.343], 9.525)
-print l1.compute_intersection(l2)
+print l1.intersection_with(l2)
