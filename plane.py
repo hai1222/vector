@@ -1,4 +1,3 @@
-#-*- coding: utf-8 -*-
 from decimal import Decimal, getcontext
 
 from vector import Vector
@@ -24,37 +23,6 @@ class Plane(object):
 
         self.set_basepoint()
 
-    def is_parallel_to(self, ell):
-        '''
-        判断两条直接是否平行
-        '''
-        n1 = Vector(self.normal_vector)
-        n2 = Vector(ell.normal_vector)
-        return n1.is_parallel_to(n2)
-
-    def __eq__(self, ell):
-        '''
-        判断两个平面是否是同一个平面
-        '''
-        if Vector(self.normal_vector).is_zero():
-            if not Vector(ell.normal_vector).is_zero():
-                return False
-            else:
-                deff = self.constant_term - ell.constant_term
-                return MyDecimal(diff).is_near_zero()
-        elif Vector(ell.normal_vector).is_zero():
-            return False
-
-        if not self.is_parallel_to(ell):
-            return False
-
-        x0 = self.basepoint
-        y0 = ell.basepoint
-        basepoint_difference = x0.minus(y0)
-
-        n = self.normal_vector
-        return basepoint_difference.is_orthogonal_to(Vector(n))
-
 
     def set_basepoint(self):
         try:
@@ -63,7 +31,9 @@ class Plane(object):
             basepoint_coords = ['0']*self.dimension
 
             initial_index = Plane.first_nonzero_index(n)
-            initial_coefficient = Decimal(n[initial_index])
+            print 'plane:n:',n
+            print 'plane:initial_index:',initial_index
+            initial_coefficient = n[initial_index]
 
             basepoint_coords[initial_index] = c/initial_coefficient
             self.basepoint = Vector(basepoint_coords)
@@ -100,6 +70,7 @@ class Plane(object):
             return output
 
         n = self.normal_vector
+        print 'plane-n:',n
 
         try:
             initial_index = Plane.first_nonzero_index(n)
@@ -123,30 +94,16 @@ class Plane(object):
 
     @staticmethod
     def first_nonzero_index(iterable):
+        find_index = -1
         for k, item in enumerate(iterable):
-            if not MyDecimal(item).is_near_zero():
-                return k
-        raise Exception(Plane.NO_NONZERO_ELTS_FOUND_MSG)
+            if not MyDecimal(item).is_near_zero() and find_index == -1:
+                find_index = k
+        if find_index == -1:
+            raise Exception(Plane.NO_NONZERO_ELTS_FOUND_MSG)
+        else:
+            return find_index
 
 
 class MyDecimal(Decimal):
     def is_near_zero(self, eps=1e-10):
         return abs(self) < eps
-
-print '1#'
-p1 = Plane([-0.412, 3.806, 0.728], -3.46)
-p2 = Plane([1.03, -9.515, -1.82], 8.65)
-print p1.is_parallel_to(p2)
-print p1 == p2
-
-print '2#'
-p1 = Plane([2.611, 5.528, 0.283], 4.6)
-p2 = Plane([7.715, 8.306, 5.342], 3.76)
-print p1.is_parallel_to(p2)
-print p1 == p2
-
-print '3#'
-p1 = Plane([-7.926, 8.625, -7.212], -7.95)
-p2 = Plane([-2.692, 2.875, -2.404], -2.443)
-print p1.is_parallel_to(p2)
-print p1 == p2
