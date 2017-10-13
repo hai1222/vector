@@ -31,8 +31,6 @@ class Plane(object):
             basepoint_coords = ['0']*self.dimension
 
             initial_index = Plane.first_nonzero_index(n)
-            print 'plane:n:',n
-            print 'plane:initial_index:',initial_index
             initial_coefficient = n[initial_index]
 
             basepoint_coords[initial_index] = c/initial_coefficient
@@ -70,7 +68,6 @@ class Plane(object):
             return output
 
         n = self.normal_vector
-        print 'plane-n:',n
 
         try:
             initial_index = Plane.first_nonzero_index(n)
