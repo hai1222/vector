@@ -15,6 +15,10 @@ class Vector(object):
         except TypeError:
             raise TypeError('The coordinates must be an iterable')
 
+    def times_scalar(self, c):
+      new_coordinates = [Decimal(c)*x for x in self.coordinates]
+      return Vector(new_coordinates)
+
     def __iter__(self):
         return self
 
