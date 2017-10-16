@@ -74,7 +74,7 @@ class Vector(object):
 
 	def plus(self, v):
 		new_coordinates = [Decimal(x)+Decimal(y) for x,y in zip(self.coordinates, v.coordinates)]
-		return new_coordinates
+		return Vector(new_coordinates)
 
 	def __iter__(self):
 		return self
