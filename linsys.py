@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 from decimal import Decimal, getcontext
 from copy import deepcopy
 
@@ -89,6 +90,32 @@ class LinearSystem(object):
     def compute_triangular_form(self):
         system = deepcopy(self)
 
+        indices = system.indices_of_first_nonzero_terms_in_each_row()
+        if indices[0] != 0:
+            #把第一条记录置换成x_1有系数
+            index1, index2 = -1, -1
+            for k, i in enumerate(indices):
+                if i == 0 and index1 == -1:
+                    index1 = k
+                if i != 0 and index2 == -1:
+                    index2 = k
+
+            system.swap_rows(index1, index2)
+
+        indices = system.indices_of_first_nonzero_terms_in_each_row()
+        #消去除第一行外其他的行的x_1
+        index3 = []
+        for k, i in enumerate(indices):
+            if k != 0 and i == 0:
+                index3.append(k)
+        if len(index3) > 0:
+            for i in index3:
+                coefficient = system[i].normal_vector[0] / system[0].normal_vector[0]
+                system.add_multiple_times_row_to_row(-1 * coefficient, 0, i)
+
+        indices = system.indices_of_first_nonzero_terms_in_each_row()
+        print indices
+
         return system
 
 
@@ -136,7 +163,6 @@ p2 = Plane(normal_vector=Vector(['1','-1','1']), constant_term='2')
 p3 = Plane(normal_vector=Vector(['1','2','-5']), constant_term='3')
 s = LinearSystem([p1,p2,p3])
 t = s.compute_triangular_form()
-print s.indices_of_first_nonzero_terms_in_each_row()
 if not (t[0] == Plane(normal_vector=Vector(['1','-1','1']), constant_term='2') and
         t[1] == Plane(normal_vector=Vector(['0','1','1']), constant_term='1') and
         t[2] == Plane(normal_vector=Vector(['0','0','-9']), constant_term='-2')):
