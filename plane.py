@@ -59,7 +59,7 @@ class Plane(object):
 			if not ell.normal_vector.is_zero():
 				return False
 			else:
-				deff = self.constant_term - ell.constant_term
+				diff = self.constant_term - ell.constant_term
 				return MyDecimal(diff).is_near_zero()
 		elif ell.normal_vector.is_zero():
 			return False
